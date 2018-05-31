@@ -6,14 +6,14 @@ Pod::Spec.new do |s|
 
 
   s.name         = "QBMDateTimePicker"
-  s.version      = "0.0.1"
+  s.version      = "1.0.0"
   s.summary      = "QBMDateTimePicker File"
 
   s.description  = <<-DESC
                   Testing private podspec,to verify availability
                    DESC
 
-  s.homepage     = 'https://github.com/yolanderJing/stunning-fiesta'
+  s.homepage     = 'https://github.com/qbmFE/eros-plugin-IOS-dateTimePicker'
 
   s.license      = "MIT"
 
@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = "8.0"
 
-  s.source       = { :git => 'https://github.com/yolanderJing/stunning-fiesta.git', :tag => s.version }
+  s.source       = { :git => 'https://github.com/qbmFE/eros-plugin-IOS-dateTimePicker.git', :tag => s.version }
 
   #s.source_files  = "Source/*"
 
