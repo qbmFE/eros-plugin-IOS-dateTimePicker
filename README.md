@@ -5,17 +5,13 @@
 安装 
 ====================================
 
-1. 在你的`Podfile` 文件中，添加
+1. 打开iOS目录`工程目录/platforms/ios/WeexEros`，编辑Podfile文件，增加以下代码；
 
 ```
  pod 'QBMDateTimePicker', :git => 'https://github.com/qbmFE/eros-plugin-IOS-dateTimePicker.git', :tag => '1.0.0'
 ```
 
-2. 从终端进入项目`Podfile`所在的文件夹，然后执行初始化命令
-
-``` bash
-pod update  
-```
+2. 在终端中`cd`到此目录下执行 `pod update`
 
 
 使用
