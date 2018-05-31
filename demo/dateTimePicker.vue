@@ -22,9 +22,10 @@ import { WxcCell } from 'weex-ui';
 
 const dateTimePicker = weex.requireModule('dateTimePicker');
 
-import Title from '../_mods/title';
 export default {
-    components: { WxcCell, Title }, 
+    components: { 
+        WxcCell 
+    }, 
     data () {
         return {
             normalDateText: true,
