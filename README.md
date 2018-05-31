@@ -33,7 +33,7 @@ API
 ```js
 // 示例
 dateTimePicker.open({
-    value: '',//必选,选中的值，格式为yyyy-MM-dd HH:mm，当value为空，默认选中当前时间，当value不为空，选中value的值；
+	value: '',//必选,选中的值，格式为yyyy-MM-dd HH:mm，当value为空，默认选中当前时间，当value不为空，选中value的值
 	max: '',//可选，日期最大值，默认2099-12-31 23:59
 	min: '',//可选，日期最小值，默认1900-12-31 00:00
 	title: '',//可选，标题的文案，默认为空
