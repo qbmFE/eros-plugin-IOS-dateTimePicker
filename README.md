@@ -8,7 +8,7 @@
 1. 打开iOS目录`工程目录/platforms/ios/WeexEros`，编辑Podfile文件，增加以下代码；
 
 ```
- pod 'QBMDateTimePicker', :git => 'https://github.com/qbmFE/eros-plugin-IOS-dateTimePicker.git', :tag => '1.0.1'
+ pod 'QBMDateTimePicker', :git => 'https://github.com/qbmFE/eros-plugin-IOS-dateTimePicker.git', :tag => '1.0.0'
 ```
 
 2. 到此目录下执行 `pod update`
@@ -54,5 +54,9 @@ dateTimePicker.open({
 ====================================
 
 ![](https://image.qbm360.com/demo/dateTimePicker.png)
+
+更新日志
+====================================
+1、发布ios版本日期选择插件 1.0.0 beta1；
 
 
