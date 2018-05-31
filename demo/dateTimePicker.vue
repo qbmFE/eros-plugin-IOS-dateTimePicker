@@ -5,13 +5,15 @@
           <text @click="showNormalDate" v-if="normalDateText">选择时间</text>
           <text @click="showNormalDate" v-if="normalDateVal">{{normalDate}}</text>
         </wxc-cell>
-        <wxc-cell title="设置时间可选范围"
+        <wxc-cell title="开始时间"
             :has-top-border="true" >
-          <text @click="showStartDate" v-if="startDateText">开始时间</text>
+          <text @click="showStartDate" v-if="startDateText">请选择</text>
           <text @click="showStartDate" v-if="startDateVal">{{startDate}}</text>
-          <text>-</text>
-          <text @click="showStartDate" v-if="startDateText">结束时间</text>
-          <text @click="showStartDate" v-if="startDateVal">{{startDate}}</text>
+        </wxc-cell>
+        <wxc-cell title="结束时间"
+            :has-top-border="true" >
+          <text @click="showEndDate" v-if="endDateText">请选择</text>
+          <text @click="showEndDate" v-if="endDateVal">{{endDate}}</text>
         </wxc-cell>
     </div>
 </template>
