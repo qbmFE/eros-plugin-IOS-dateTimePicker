@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
 
   s.license      = "MIT"
 
-  s.author       = { "yolanderJing" => "1015573169@qq.com" }
+  s.author       = { "yolanderJing" => "zhangj@qbm360.com" }
 
   s.platform     = :ios
 
@@ -25,6 +25,7 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => 'https://github.com/qbmFE/eros-plugin-IOS-dateTimePicker.git', :tag => s.version }
 
+  #s.source_files  = "Source/*"
 
   s.requires_arc = true
 

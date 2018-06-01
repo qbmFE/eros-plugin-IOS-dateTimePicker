@@ -11,6 +11,8 @@
 #import "WXComponentManager.h"
 #import "QBMDatePickerView.h"
 #import "WXConvert.h"
+#import <WeexPluginLoader/WeexPluginLoader.h>
+
 @interface QBMDatePickerModule()<QBMDatePickerViewDelegate>
 
 @property(nonatomic,copy)NSString *title;
@@ -25,7 +27,7 @@
 @property(nonatomic,copy)WXModuleKeepAliveCallback callback;
 @end
 
-
+WX_PlUGIN_EXPORT_MODULE(dateTimePicker, QBMDatePickerModule)
 @implementation QBMDatePickerModule
 @synthesize weexInstance;
 

@@ -436,8 +436,12 @@
     [datePickerView selectRow:[dayArray indexOfObject:[NSString stringWithFormat:@"%ld",day]] inComponent:2 animated:YES];
     
     if (_datePickerViewShowModel == QBMDatePickerViewShowModelDefalut) {
-        [datePickerView selectRow:[hourArray indexOfObject:hourStr] inComponent:3 animated:YES];
-        [datePickerView selectRow:[minuteArray indexOfObject:minuteStr] inComponent:4 animated:YES];
+        if ([hourArray containsObject:hourStr]) {
+            [datePickerView selectRow:[hourArray indexOfObject:hourStr] inComponent:3 animated:YES];
+        }
+        if ([minuteArray containsObject:minuteStr]) {
+            [datePickerView selectRow:[minuteArray indexOfObject:minuteStr] inComponent:4 animated:YES];
+        }
     }else if (_datePickerViewShowModel == QBMDatePickerViewShowModelYearMonthDayHour) {
         [datePickerView selectRow:[hourArray indexOfObject:hourStr] inComponent:3 animated:YES];
     }
