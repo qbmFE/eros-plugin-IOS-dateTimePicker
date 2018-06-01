@@ -53,7 +53,7 @@ dateTimePicker.open({
 界面截图
 ====================================
 
-![](https://image.qbm360.com/demo/dateTimePicker.png)
+![](https://image.qbm360.com/demo/dateTimePicker.gif)
 
 更新日志
 ====================================
