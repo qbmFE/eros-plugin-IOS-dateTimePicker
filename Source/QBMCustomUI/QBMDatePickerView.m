@@ -10,8 +10,8 @@
 #import "QBMDefine.h"
 #import "QBMUtil.h"
 
-#define QBMTOOLBAR_HEIGHT 45.0 //顶部工具栏高度。
-#define QBMTITLE_HEIGHT 45.0 //标题高度。
+#define QBMTOOLBAR_HEIGHT 45.0*BILI //顶部工具栏高度。
+#define QBMROW_HEIGHT 44.0*BILI
 #define QBMDURATION 0.3 //动画时长。
 #define QBMTITLE_LABEL_START_TAG 1 //从左往右第一个标题Label的Tag值。
 
@@ -51,17 +51,23 @@
     NSInteger selectedHourRow;
     NSInteger selectedMinuteRow;
     
-    //总标题数。
-    NSInteger totalTitleLabel;
-    
     UILabel  *titleLabel;
+    CGSize sizeOfYear;
+    CGSize sizeOfOther;
+    CGSize sizeOfTitle;
 }
-@property(nonatomic,strong)UIView *contentView;
-@end
+    @property(nonatomic,strong)UIView *contentView;
+    @end
 @implementation QBMDatePickerView
-
+    
 - (id)initWithFrame:(CGRect)frame  withDic:(NSDictionary *)dict{
     if (self = [super initWithFrame:frame]) {
+        NSDictionary *dict16 = [[NSDictionary alloc] initWithObjectsAndKeys:[UIFont systemFontOfSize:16*BILIWIDTH],NSFontAttributeName, nil];
+        sizeOfYear= [@"2008" sizeWithAttributes:dict16];
+        sizeOfOther= [@"20" sizeWithAttributes:dict16];
+        
+        NSDictionary *dict12 = [[NSDictionary alloc] initWithObjectsAndKeys:[UIFont systemFontOfSize:12*BILIWIDTH],NSFontAttributeName, nil];
+        sizeOfTitle=[@"年" sizeWithAttributes:dict12];
         UIControl *backGroundView=[[UIControl  alloc]initWithFrame:self.bounds];
         backGroundView.backgroundColor=[UIColor  blackColor];
         [backGroundView addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchUpInside];
@@ -71,10 +77,10 @@
         self.contentView=[[UIView alloc]init];
         if (kDevice_Is_iPhoneX)
         {
-            self.contentView.frame=CGRectMake(0, backGroundView.frame.size.height-300-34, Screen_width, 300);
+            self.contentView.frame=CGRectMake(0, backGroundView.frame.size.height-265*BILI-34, Screen_width, 265*BILI+34);
         }
         else{
-            self.contentView.frame=CGRectMake(0, backGroundView.frame.size.height-300, Screen_width, 300);
+            self.contentView.frame=CGRectMake(0, backGroundView.frame.size.height-265*BILI, Screen_width, 265*BILI);
         }
         
         self.contentView.backgroundColor = [UIColor whiteColor];
@@ -88,21 +94,13 @@
     }
     return self;
 }
-
+    
 - (void)layoutSubviews {
     CGFloat width = self.contentView.frame.size.width;
     CGFloat height = self.contentView.frame.size.height;
-    
-    
-    CGFloat labelWidth = width / totalTitleLabel;
-    for (NSInteger tag = 0; tag <= totalTitleLabel; tag++) {
-        UILabel *label = (UILabel *)[self.contentView viewWithTag:QBMTITLE_LABEL_START_TAG + tag];
-        label.frame = CGRectMake(tag * labelWidth, QBMTOOLBAR_HEIGHT, labelWidth, QBMTITLE_HEIGHT);
-    }
-    
-    datePickerView.frame = CGRectMake(0, QBMTOOLBAR_HEIGHT + QBMTITLE_HEIGHT, width, height - QBMTOOLBAR_HEIGHT - QBMTITLE_HEIGHT);
+    datePickerView.frame = CGRectMake(0, QBMTOOLBAR_HEIGHT,width, height - QBMTOOLBAR_HEIGHT-34);
 }
-
+    
 - (void)__initView:(NSDictionary *)dict {
     
     
@@ -121,7 +119,7 @@
     else{
         [titleLabel setTextColor:[QBMUtil colorWithHexString:@"#313131"]];
     }
-    [titleLabel setFont:[UIFont systemFontOfSize:15.0]];
+    [titleLabel setFont:[UIFont systemFontOfSize:15.0*BILIWIDTH]];
     [titleLabel setTextAlignment:NSTextAlignmentCenter];
     [self.contentView addSubview:titleLabel];
     
@@ -140,7 +138,7 @@
     else{
         [cancel setTitleColor:[QBMUtil  colorWithHexString:@"#313131"] forState:UIControlStateNormal];
     }
-    cancel.titleLabel.font = [UIFont systemFontOfSize:14];
+    cancel.titleLabel.font = [UIFont systemFontOfSize:15*BILIWIDTH];
     [cancel addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchUpInside];
     cancel.tag = 100;
     [self.contentView  addSubview:cancel];
@@ -161,18 +159,16 @@
         [confirm setTitleColor:[QBMUtil  colorWithHexString:@"#00B4FF"] forState:UIControlStateNormal];
     }
     
-    confirm.titleLabel.font = [UIFont systemFontOfSize:14];
+    confirm.titleLabel.font = [UIFont systemFontOfSize:15*BILIWIDTH];
     [confirm addTarget:self action:@selector(completion) forControlEvents:UIControlEventTouchUpInside];
     confirm.tag = 200;
     [self.contentView addSubview:confirm];
     
-    //标题。
-    [self __initTitleView];
-    
     //分割线
-    UIView *lineView=[[UIView  alloc]initWithFrame:CGRectMake(0, 45-0.5, self.frame.size.width, 0.5)];
+    UIView *lineView=[[UIView  alloc]initWithFrame:CGRectMake(0, QBMTOOLBAR_HEIGHT-0.5, self.frame.size.width, 0.5)];
     lineView.backgroundColor=[QBMUtil  colorWithHexString:@"#e5e5e5"];
     [self.contentView  addSubview:lineView];
+    
     //UIPickerView.
     datePickerView = [[UIPickerView alloc]init];
     datePickerView.backgroundColor = [UIColor whiteColor];
@@ -180,49 +176,36 @@
     datePickerView.delegate = self;
     datePickerView.dataSource = self;
     [self.contentView addSubview:datePickerView];
-    //    //分割线
-    //    UIView *beforeSepLine = [[UIView alloc] initWithFrame:CGRectMake(0, 39, self.frame.size.width, 1)];
-    //    beforeSepLine.backgroundColor=[QBMUtil  colorWithHexString:@"#e5e5e5"];
-    //    [self.contentView addSubview:beforeSepLine];
-}
-
-- (void)__initTitleView {
-    NSArray *titleArray = nil;
-    switch (_datePickerViewShowModel) {
-        case QBMDatePickerViewShowModelDefalut:
-            //            [datePickerView selectRow:selectedHourRow inComponent:3 animated:NO];
-            //            [datePickerView selectRow:selectedMinuteRow inComponent:4 animated:NO];
-            totalTitleLabel = 5;
-            titleArray = @[@"年",@"月",@"日",@"时",@"分"];
-            break;
-        case QBMDatePickerViewShowModelYearMonthDay:
-            totalTitleLabel = 3;
-            titleArray = @[@"年",@"月",@"日"];
-            break;
-        case QBMDatePickerViewShowModelYearMonthDayHour:
-            totalTitleLabel = 4;
-            titleArray = @[@"年",@"月",@"日",@"时"];
-            //            [datePickerView selectRow:selectedHourRow inComponent:3 animated:NO];
-            break;
-    }
     
-    for (UIView *view in self.subviews) {
-        if ([view isKindOfClass:[UILabel class]]) {
-            [view removeFromSuperview];
+    //年月日
+    // CGFloat   frameOri=0.0f;
+    NSArray *titleArray=[NSArray  arrayWithObjects:@"年", @"月",@"日",@":",nil];
+    for(int i=0;i<4;i++){
+        UILabel *lable=[[UILabel  alloc]init];
+        lable.textAlignment=NSTextAlignmentCenter;
+        lable.font=[UIFont systemFontOfSize:12*BILIWIDTH];
+        lable.textColor=[QBMUtil  colorWithHexString:@"#666666"];
+        lable.text=[NSString  stringWithFormat:@"%@",titleArray[i]];
+        [self.contentView  addSubview:lable];
+        
+        switch (i) {
+            case 0:
+            lable.frame=CGRectMake(70*BILIWIDTH, 133*BILI, sizeOfTitle.width, QBMROW_HEIGHT);
+            break;
+            case 1:
+            lable.frame=CGRectMake(133*BILIWIDTH, 133*BILI, sizeOfTitle.width, QBMROW_HEIGHT);
+            break;
+            case 2:
+            lable.frame=CGRectMake(190*BILIWIDTH, 133*BILI, sizeOfTitle.width, QBMROW_HEIGHT);
+            break;
+            case 3:
+            lable.frame=CGRectMake(285*BILIWIDTH, 133*BILI, sizeOfTitle.width, QBMROW_HEIGHT);
+            break;
+            default:
+            break;
         }
     }
-    
-    for (NSInteger i = 0; i < titleArray.count; i++) {
-        UILabel *titleLabel = [[UILabel alloc]init];
-        titleLabel.text = [titleArray objectAtIndex:i];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.font=[UIFont systemFontOfSize:15];
-        titleLabel.textColor=[QBMUtil  colorWithHexString:@"#313131"];
-        titleLabel.tag = QBMTITLE_LABEL_START_TAG + i;
-        [self.contentView addSubview:titleLabel];
-    }
 }
-
 - (void)__initData:(NSDictionary *)dict {
     //初始化最大值。
     NSDate *minDate;
@@ -332,7 +315,7 @@
     }
     
 }
-
+    
 #pragma mark - Public
 - (void)showViewWithDate:(NSDate *)date animation:(BOOL)animation{
     [self __showWithAnimation:animation];
@@ -350,20 +333,16 @@
     NSInteger day = [dateComponents day];
     NSInteger hour = [dateComponents hour];
     NSInteger minute = [dateComponents minute];
+    //加0处理
+    NSString *monthStr;
+    NSString *dayStr;
     NSString *hourStr;
     NSString *minuteStr;
-    if (hour<10) {
-        hourStr=[NSString stringWithFormat:@"0%ld",hour];
-    }
-    else{
-        hourStr=[NSString stringWithFormat:@"%ld",hour];
-    }
-    if (minute<10) {
-        minuteStr=[NSString stringWithFormat:@"0%ld",minute];
-    }
-    else{
-        minuteStr=[NSString stringWithFormat:@"%ld",minute];
-    }
+    monthStr=month<10?[NSString stringWithFormat:@"0%ld",month]:[NSString stringWithFormat:@"%ld",month];
+    dayStr=day<10?[NSString stringWithFormat:@"0%ld",day]:[NSString stringWithFormat:@"%ld",day];
+    hourStr=hour<10?[NSString stringWithFormat:@"0%ld",hour]:[NSString stringWithFormat:@"%ld",hour];
+    minuteStr=minute<10?[NSString stringWithFormat:@"0%ld",minute]:[NSString stringWithFormat:@"%ld",minute];
+    
     if (_datePickerViewDateRangeModel == QBMDatePickerViewDateRangeModelCurrent) {
         //更新时间最大值为当前系统时间。
         NSDateComponents *currentDateComponents = [calendar components:calendarUnit fromDate:[NSDate date]];
@@ -427,91 +406,129 @@
     [datePickerView reloadAllComponents];
     
     if (_minYear>year || (_minYear==year && minMonth>month) || (_minYear==year && minMonth==month && minDay>day)) {
-        UIAlertView *alertView= [[UIAlertView  alloc]initWithTitle:@"提示" message:@"数据异常！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-        [alertView show];
-        return;
+        //        UIAlertView *alertView= [[UIAlertView  alloc]initWithTitle:@"提示" message:@"数据异常！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+        //        [alertView show];
+        //        return;
+        
+        [datePickerView selectRow:0 inComponent:0 animated:YES];
+        [datePickerView selectRow:0 inComponent:1 animated:YES];
+        [datePickerView selectRow:0 inComponent:2 animated:YES];
+        
+        if (_datePickerViewShowModel == QBMDatePickerViewShowModelDefalut) {
+            [datePickerView selectRow:0 inComponent:3 animated:YES];
+            [datePickerView selectRow:0 inComponent:4 animated:YES];
+        }else if (_datePickerViewShowModel == QBMDatePickerViewShowModelYearMonthDayHour) {
+            [datePickerView selectRow:0 inComponent:3 animated:YES];
+        }
+        //赋值
+        selectedYearRow=0;
+        selectedMonthRow=0;
+        selectedDayRow=0;
+        selectedHourRow=0;
+        selectedMinuteRow=0;
     }
-    [datePickerView selectRow:[yearArray indexOfObject:[NSString stringWithFormat:@"%ld",year]] inComponent:0 animated:YES];
-    [datePickerView selectRow:[monthArray indexOfObject:[NSString stringWithFormat:@"%ld",month]] inComponent:1 animated:YES];
-    [datePickerView selectRow:[dayArray indexOfObject:[NSString stringWithFormat:@"%ld",day]] inComponent:2 animated:YES];
-    
-    if (_datePickerViewShowModel == QBMDatePickerViewShowModelDefalut) {
-        if ([hourArray containsObject:hourStr]) {
+    else{
+        [datePickerView selectRow:[yearArray indexOfObject:[NSString stringWithFormat:@"%ld",year]] inComponent:0 animated:YES];
+        [datePickerView selectRow:[monthArray indexOfObject:monthStr] inComponent:1 animated:YES];
+        [datePickerView selectRow:[dayArray indexOfObject:dayStr] inComponent:2 animated:YES];
+        
+        if (_datePickerViewShowModel == QBMDatePickerViewShowModelDefalut) {
+            if ([hourArray containsObject:hourStr]) {
+                [datePickerView selectRow:[hourArray indexOfObject:hourStr] inComponent:3 animated:YES];
+            }
+            if ([minuteArray containsObject:minuteStr]) {
+                [datePickerView selectRow:[minuteArray indexOfObject:minuteStr] inComponent:4 animated:YES];
+            }
+            
+        }else if (_datePickerViewShowModel == QBMDatePickerViewShowModelYearMonthDayHour) {
             [datePickerView selectRow:[hourArray indexOfObject:hourStr] inComponent:3 animated:YES];
         }
-        if ([minuteArray containsObject:minuteStr]) {
-            [datePickerView selectRow:[minuteArray indexOfObject:minuteStr] inComponent:4 animated:YES];
-        }
-    }else if (_datePickerViewShowModel == QBMDatePickerViewShowModelYearMonthDayHour) {
-        [datePickerView selectRow:[hourArray indexOfObject:hourStr] inComponent:3 animated:YES];
+        //赋值
+        selectedYearRow=[yearArray indexOfObject:[NSString stringWithFormat:@"%ld",year]];
+        selectedMonthRow=[monthArray indexOfObject:monthStr];
+        selectedDayRow=[dayArray indexOfObject:dayStr];
+        selectedHourRow=[hourArray indexOfObject:hourStr];
+        selectedMinuteRow=[minuteArray indexOfObject:minuteStr];
+        
     }
-    //赋值
-    selectedYearRow=[yearArray indexOfObject:[NSString stringWithFormat:@"%ld",year]];
-    selectedMonthRow=[monthArray indexOfObject:[NSString stringWithFormat:@"%ld",month]];
-    selectedDayRow=[dayArray indexOfObject:[NSString stringWithFormat:@"%ld",day]];
-    selectedHourRow=[hourArray indexOfObject:hourStr];
-    selectedMinuteRow=[minuteArray indexOfObject:minuteStr];
+    
 }
-
+    
 - (void)hideViewWithAnimation:(BOOL)animation {
     [self __hideWithAnimation:animation];
 }
-
+    
 #pragma mark - Private
-/**
- *  除了重置年份外，月、天、时和分均在原有基础上新增或减少，避免过多无谓的循环。
- */
-
+    /**
+     *  除了重置年份外，月、天、时和分均在原有基础上新增或减少，避免过多无谓的循环。
+     */
+    
 #pragma mark 重置年份
 - (void)resetYearArray
-{
-    //先判断是否需要重置。
-    NSInteger minYear =_minYear;
-    NSInteger maxYear = _maxYear;
-    if (_minYear == minYear && _maxYear == maxYear) {
-        return;
+    {
+        //先判断是否需要重置。
+        NSInteger minYear =_minYear;
+        NSInteger maxYear = _maxYear;
+        if (_minYear == minYear && _maxYear == maxYear) {
+            return;
+        }
+        
+        [yearArray removeAllObjects];
+        for (NSInteger i = _minYear; i <= _maxYear; i++) {
+            [yearArray addObject:[NSString stringWithFormat:@"%ld",i]];
+        }
+        
+        //重置年份选中行，防止越界。
+        selectedYearRow = selectedYearRow > [yearArray count] - 1 ? [yearArray count] - 1 : selectedYearRow;
     }
     
-    [yearArray removeAllObjects];
-    for (NSInteger i = _minYear; i <= _maxYear; i++) {
-        [yearArray addObject:[NSString stringWithFormat:@"%ld",i]];
-    }
-    
-    //重置年份选中行，防止越界。
-    selectedYearRow = selectedYearRow > [yearArray count] - 1 ? [yearArray count] - 1 : selectedYearRow;
-}
-
 #pragma mark 重置月份
 - (void)resetMonthArrayWithYear:(NSInteger)year
-{
-    NSInteger totalMonth = 12;
-    NSInteger origMonth = 1;
-    [monthArray  removeAllObjects];
-    if(_minYear == year){
-        origMonth = minMonth; //限制月份。
-        NSInteger lastMonth=12;
-        if(_maxYear == _minYear) {
-            lastMonth=maxMonth;
+    {
+        NSInteger totalMonth = 12;
+        NSInteger origMonth = 1;
+        [monthArray  removeAllObjects];
+        if(_minYear == year){
+            origMonth = minMonth; //限制月份。
+            NSInteger lastMonth=12;
+            if(_maxYear == _minYear) {
+                lastMonth=maxMonth;
+            }
+            for (NSInteger i=0; i<(lastMonth-origMonth+1);i++) {
+                
+                if (origMonth+i<10) {
+                    [monthArray addObject:[NSString stringWithFormat:@"0%d",origMonth+i]];
+                }
+                else{
+                    [monthArray addObject:[NSString stringWithFormat:@"%d",origMonth+i]];
+                }
+            }
         }
-        for (NSInteger i=0; i<(lastMonth-origMonth+1);i++) {
-            [monthArray addObject:[NSString stringWithFormat:@"%ld",origMonth+i]];
+        else if (_maxYear == year) {
+            totalMonth = maxMonth; //限制月份。
+            for (NSInteger i=1; i<=totalMonth;i++) {
+                if (i<10) {
+                    [monthArray addObject:[NSString stringWithFormat:@"0%d",i]];
+                }
+                else{
+                    [monthArray addObject:[NSString stringWithFormat:@"%d",i]];
+                }
+            }
         }
+        else{
+            for ( int i=0; i< 12; i++) {
+                if (i+1<10) {
+                    [monthArray addObject:[NSString stringWithFormat:@"0%d",i+1]];
+                }
+                else{
+                    [monthArray addObject:[NSString stringWithFormat:@"%d",i+1]];
+                }
+            }
+        }
+        //重置月份选中行，防止越界。
+        selectedMonthRow = selectedMonthRow > [monthArray count] - 1 ? [monthArray count] - 1: selectedMonthRow;
     }
-    else if (_maxYear == year) {
-        totalMonth = maxMonth; //限制月份。
-        for (NSInteger i=1; i<=totalMonth;i++) {
-            [monthArray addObject:[NSString stringWithFormat:@"%ld",i]];
-        }
-    }
-    else{
-        for ( int i=0; i< 12; i++) {
-            [monthArray addObject:[NSString stringWithFormat:@"%d",i+1]];
-        }
-    }
-    //重置月份选中行，防止越界。
-    selectedMonthRow = selectedMonthRow > [monthArray count] - 1 ? [monthArray count] - 1: selectedMonthRow;
-}
-
+    
 #pragma mark 重置天数
 - (void)resetDayArrayWithYear:(NSInteger)year month:(NSInteger)month {
     NSInteger oriDay=0;
@@ -525,7 +542,13 @@
             totalDay=maxDay;
         }
         for (NSInteger i=0; i<(totalDay-oriDay+1);i++) {
-            [dayArray addObject:[NSString stringWithFormat:@"%ld",oriDay+i]];
+            
+            if (oriDay+i<10) {
+                [dayArray addObject:[NSString stringWithFormat:@"0%d",oriDay+i]];
+            }
+            else{
+                [dayArray addObject:[NSString stringWithFormat:@"%d",oriDay+i]];
+            }
         }
     }
     else if (_maxYear == year) {
@@ -537,20 +560,30 @@
         }
         
         for (int i=0; i<totalDay; i++) {
-            [dayArray addObject:[NSString stringWithFormat:@"%d",i+1]];
+            if (i+1<10) {
+                [dayArray addObject:[NSString stringWithFormat:@"0%d",i+1]];
+            }
+            else{
+                [dayArray addObject:[NSString stringWithFormat:@"%d",i+1]];
+            }
         }
     }
     else{
         totalDay=[self  getDaysWithSelectYear:year andMonth:month];
         for (NSInteger i=0; i<totalDay;i++) {
-            [dayArray addObject:[NSString stringWithFormat:@"%ld",1+i]];
+            if (i+1<10) {
+                [dayArray addObject:[NSString stringWithFormat:@"0%d",i+1]];
+            }
+            else{
+                [dayArray addObject:[NSString stringWithFormat:@"%d",i+1]];
+            }
         }
     }
     
     //重置天数选中行，防止越界。
     selectedDayRow = selectedDayRow > [dayArray count] - 1 ? [dayArray count] - 1 : selectedDayRow;
 }
-
+    
 #pragma mark 重置小时
 - (void)resetHourArrayWithYear:(NSInteger)year month:(NSInteger)month day:(NSInteger)day {
     NSInteger totalHour = 23;
@@ -599,7 +632,7 @@
     //重置小时选中行，防止越界。
     selectedHourRow = selectedHourRow > [hourArray count] - 1 ? [hourArray count] - 1 : selectedHourRow;
 }
-
+    
 #pragma mark 重置分钟
 - (void)resetMinuteArrayWithYear:(NSInteger)year
                            month:(NSInteger)month
@@ -678,7 +711,7 @@
         [_delegate cancleEvent];
     }
 }
-
+    
 #pragma mark 完成
 - (void)completion {
     NSDateComponents *dateComponents = [[NSDateComponents alloc]init];
@@ -700,7 +733,7 @@
     
     [self __hideWithAnimation:YES];
 }
-
+    
 #pragma mark 显示
 - (void)__showWithAnimation:(BOOL)animation {
     _visible = YES;
@@ -716,7 +749,7 @@
     }
     
 }
-
+    
 #pragma mark 隐藏
 - (void)__hideWithAnimation:(BOOL)animation {
     
@@ -724,7 +757,7 @@
         [self removeFromSuperview];
     }];
 }
-
+    
 #pragma mark 更新但前时间数组中的数据
 - (void)updateCurrentDateArray {
     //获取当前选中时间。
@@ -740,97 +773,153 @@
     [self resetHourArrayWithYear:currentYear month:currentMonth day:currentDay];
     [self resetMinuteArrayWithYear:currentYear month:currentMonth day:currentDay hour:currentHour];
 }
-
+    
 #pragma mark - UIPickerViewDelegate, UIPickerViewDataSource
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     
     switch (_datePickerViewShowModel) {
         case QBMDatePickerViewShowModelDefalut:
-            return 5;
-            break;
+        return 5;
+        break;
         case QBMDatePickerViewShowModelYearMonthDay:
-            return 3;
-            break;
+        return 3;
+        break;
         case QBMDatePickerViewShowModelYearMonthDayHour:
-            return 4;
-            break;
+        return 4;
+        break;
     }
 }
-
+- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component
+    {
+        
+        switch (component) {
+            case 0:
+            return 83*BILIWIDTH;
+            break;
+            case 1:
+            return 60*BILIWIDTH;
+            break;
+            case 2:
+            return 57*BILIWIDTH;
+            break;
+            case 3:
+            return 70*BILIWIDTH;
+            break;
+            case 4:
+            return  Screen_width-(83+60+57+70)*BILIWIDTH;
+            break;
+            default:
+            return 0;
+            break;
+        }
+        
+        
+    }
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     switch (component) {
         case 0:
-            return [yearArray count];
-            break;
+        return [yearArray count];
+        break;
         case 1:
-            return [monthArray count];
-            break;
+        return [monthArray count];
+        break;
         case 2:
-            return [dayArray count];
-            break;
+        return [dayArray count];
+        break;
         case 3:
-            return [hourArray count];
-            break;
+        return [hourArray count];
+        break;
         case 4:
-            return [minuteArray count];
-            break;
+        return [minuteArray count];
+        break;
         default:
-            return 0;
-            break;
+        return 0;
+        break;
     }
 }
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component{
     
-    
-    return 44;
+    return QBMROW_HEIGHT;
 }
-
+    
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
-{
-    UILabel *pickerLabel = (UILabel *)view;
-    pickerLabel.textColor=[QBMUtil colorWithHexString:@"#313131"];
-    if (pickerLabel == nil) {
-        CGFloat labelWidth = 0.0;
-        switch (_datePickerViewShowModel) {
-            case QBMDatePickerViewShowModelDefalut:
-                labelWidth = CGRectGetWidth(pickerView.frame) / 5;
+    {
+        UILabel *pickerLabel = (UILabel *)view;
+        if (pickerLabel == nil) {
+            CGFloat labelWidth = 0.0;
+            pickerLabel = [[UILabel alloc]init];
+            pickerLabel.backgroundColor = [UIColor clearColor];
+            pickerLabel.font = [UIFont systemFontOfSize:16*BILIWIDTH];
+            pickerLabel.textColor=[QBMUtil colorWithHexString:@"#313131"];
+            pickerLabel.textAlignment = NSTextAlignmentCenter;
+            switch (_datePickerViewShowModel) {
+                case QBMDatePickerViewShowModelDefalut:
+                {
+                    switch (component) {
+                        case 0:
+                        labelWidth=sizeOfYear.width+10*BILIWIDTH;
+                        pickerLabel.frame=CGRectMake(25*BILIWIDTH, 0.0f, labelWidth, QBMROW_HEIGHT);
+                        pickerLabel.textAlignment = NSTextAlignmentRight;
+                        break;
+                        case 1:
+                        labelWidth=sizeOfOther.width+10*BILIWIDTH;
+                        pickerLabel.frame=CGRectMake(20*BILIWIDTH, 0.0f, labelWidth, QBMROW_HEIGHT);
+                        break;
+                        case 2:
+                        labelWidth=sizeOfOther.width+10*BILIWIDTH;
+                        pickerLabel.frame=CGRectMake(20*BILIWIDTH, 0.0f, labelWidth, QBMROW_HEIGHT);
+                        pickerLabel.textAlignment = NSTextAlignmentLeft;
+                        break;
+                        case 3:
+                        labelWidth=sizeOfOther.width+10*BILIWIDTH;
+                        pickerLabel.frame=CGRectMake(60*BILIWIDTH, 0.0f, labelWidth, QBMROW_HEIGHT);
+                        pickerLabel.textAlignment = NSTextAlignmentRight;
+                        break;
+                        case 4:
+                        labelWidth=sizeOfOther.width+10*BILIWIDTH;
+                        pickerLabel.frame=CGRectMake(0.0f, 0.0f, labelWidth, QBMROW_HEIGHT);
+                        pickerLabel.textAlignment = NSTextAlignmentLeft;
+                        break;
+                        default:
+                        break;
+                    }
+                }
                 break;
-            case QBMDatePickerViewShowModelYearMonthDay:
+                case QBMDatePickerViewShowModelYearMonthDay:
                 labelWidth = CGRectGetWidth(pickerView.frame) / 3;
+                pickerLabel.frame=CGRectMake(0.0f, 0.0f, labelWidth, QBMROW_HEIGHT);
                 break;
-            case QBMDatePickerViewShowModelYearMonthDayHour:
+                case QBMDatePickerViewShowModelYearMonthDayHour:
                 labelWidth = CGRectGetWidth(pickerView.frame) / 4;
+                pickerLabel.frame=CGRectMake(0.0f, 0.0f, labelWidth, QBMROW_HEIGHT);
                 break;
+            }
         }
         
-        pickerLabel = [[UILabel alloc]initWithFrame:CGRectMake(0.0f, 0.0f, labelWidth, 30.0f)];
-        pickerLabel.textAlignment = NSTextAlignmentCenter;
-        pickerLabel.backgroundColor = [UIColor clearColor];
-        pickerLabel.font = [UIFont systemFontOfSize:14];
-    }
-    
-    switch (component) {
-        case 0:
+        switch (component) {
+            case 0:
+            
             pickerLabel.text = [yearArray objectAtIndex:row];
             break;
-        case 1:
+            case 1:
             pickerLabel.text = [monthArray objectAtIndex:row];
             break;
-        case 2:
+            case 2:
             pickerLabel.text = [dayArray objectAtIndex:row];
             break;
-        case 3:
+            case 3:
             pickerLabel.text = [hourArray objectAtIndex:row];
             break;
-        case 4:
+            case 4:
             pickerLabel.text = [minuteArray objectAtIndex:row];
             break;
-        default:
+            default:
             break;
+        }
+        
+        return pickerLabel;
     }
-    return pickerLabel;
-}
-
+    
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     switch (component) {
         case 0:
@@ -857,7 +946,7 @@
             
             [pickerView reloadAllComponents];
         }
-            break;
+        break;
         case 1:
         {
             selectedMonthRow = row;
@@ -880,7 +969,7 @@
             
             [pickerView reloadAllComponents];
         }
-            break;
+        break;
         case 2:
         {
             selectedDayRow = row;
@@ -901,7 +990,7 @@
             
             [pickerView reloadAllComponents];
         }
-            break;
+        break;
         case 3:
         {
             selectedHourRow = row;
@@ -917,14 +1006,14 @@
             
             [pickerView reloadAllComponents];
         }
-            break;
+        break;
         case 4:
-            break;
+        break;
         default:
-            break;
+        break;
     }
 }
-
+    
 #pragma mark - Setter
 - (void)setMinYear:(NSInteger)minYear {
     NSAssert(minYear < _maxYear, @"最小年份必须小于最大年份！");
@@ -934,7 +1023,7 @@
     [self resetYearArray];
     [datePickerView reloadAllComponents];
 }
-
+    
 - (void)setMaxYear:(NSInteger)maxYear {
     NSAssert(maxYear > _minYear, @"最大年份必须大于最小年份！");
     NSAssert(_datePickerViewDateRangeModel == QBMDatePickerViewDateRangeModelCustom, @"当前模式下只允许显示当前系统最大时间，所以不允许设置最大年份！");
@@ -945,14 +1034,13 @@
     [self updateCurrentDateArray];
     [datePickerView reloadAllComponents];
 }
-
+    
 - (void)setDatePickerViewShowModel:(QBMDatePickerViewShowModel)datePickerViewShowModel {
     _datePickerViewShowModel = datePickerViewShowModel;
     [datePickerView reloadAllComponents];
-    [self __initTitleView];
     
 }
-
+    
 - (void)setDatePickerViewDateRangeModel:(QBMDatePickerViewDateRangeModel)datePickerViewDateRangeModel {
     QBMDatePickerViewDateRangeModel tempModel = datePickerViewDateRangeModel;
     _datePickerViewDateRangeModel = datePickerViewDateRangeModel;
@@ -980,6 +1068,6 @@
     [self updateCurrentDateArray];
     [datePickerView reloadAllComponents];
 }
-@end
+    @end
 
 
