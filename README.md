@@ -53,12 +53,13 @@ dateTimePicker.open({
 界面截图
 ====================================
 
-![](https://image.qbm360.com/demo/dateTimePicker.gif)
+![](https://image.qbm360.com/demo/IOS-dateTimePicker.gif)
 
 更新日志
 ====================================
-1、发布iOS版日期时间选择器1.0.0 beta1(2018-05-31)；
-2、调整插件UI,适配iPhone X，版本更新至1.0.1(2018-06-21)；
+
+* 发布iOS版日期时间选择器1.0.0 beta1(2018-05-31)；
+* 调整插件UI,适配iPhone X，版本更新至1.0.1(2018-06-21)；
 
 License
 ====================================
