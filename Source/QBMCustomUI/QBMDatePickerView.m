@@ -94,11 +94,18 @@
     }
     return self;
 }
-    
+
 - (void)layoutSubviews {
     CGFloat width = self.contentView.frame.size.width;
     CGFloat height = self.contentView.frame.size.height;
-    datePickerView.frame = CGRectMake(0, QBMTOOLBAR_HEIGHT,width, height - QBMTOOLBAR_HEIGHT-34);
+    if (kDevice_Is_iPhoneX)
+    {
+        datePickerView.frame = CGRectMake(0, QBMTOOLBAR_HEIGHT,width, height - QBMTOOLBAR_HEIGHT-34);
+    }
+    else{
+        datePickerView.frame = CGRectMake(0, QBMTOOLBAR_HEIGHT,width, height - QBMTOOLBAR_HEIGHT);
+    }
+    
 }
     
 - (void)__initView:(NSDictionary *)dict {
