@@ -5,13 +5,14 @@
 安装 
 ====================================
 
-1. 打开iOS目录`工程目录/platforms/ios/WeexEros`，编辑Podfile文件（`pod v1.4.0,这个非常重要`），增加以下代码；
+1. 打开iOS目录`工程目录/platforms/ios/WeexEros`，编辑Podfile文件，增加以下代码；
 
 ```
  pod 'QBMDateTimePicker', :git => 'https://github.com/qbmFE/eros-plugin-IOS-dateTimePicker.git', :tag => '1.0.2'
 ```
 
 2. 到此目录下执行 `pod update`
+
 
 
 使用
@@ -22,6 +23,22 @@
 //引入module
 const dateTimePicker = weex.requireModule('dateTimePicker');
 ```
+
+
+说明
+====================================
+
+1. 使用本插件建议使用`pod 1.4.0`版本
+2. 如果使用了`pod 1.5.0+`的版本，会提示这行代码问题：
+```
+ #import <WeexPluginLoader/WeexPluginLoader.h> 
+```
+把错误的地方上修改成如下代码就可以了。
+
+```
+ #import <WeexPluginLoader/WeexPluginLoader/WeexPluginLoader.h> 
+```
+
 
 API
 ====================================
